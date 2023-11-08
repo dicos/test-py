@@ -1,5 +1,7 @@
 import os
 from dotenv import load_dotenv
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
@@ -24,3 +26,6 @@ def get_db():
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine, expire_on_commit=False)
 UtilsFastapiConnectDB = FastAPISessionMaker(os.getenv('DB_CONNECT'))
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")

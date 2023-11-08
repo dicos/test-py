@@ -11,7 +11,13 @@ class Posts(BaseModel):
     created_at = Column(DateTime(timezone=True), default=datetime.now)
     updated_at = Column(DateTime(timezone=True), default=datetime.now, onupdate=datetime.now)
     
-    # @TODO: реализовать связи
+
+class PostLikes(BaseModel):
+    __tablename__ = 'post_likes'
+
+    id = Column(Integer, primary_key=True)
+    post_id = Column(Integer, ForeignKey('posts.id', ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey('users.id'))
 
 class PostComments(BaseModel):
     __tablename__ = 'post_comments'
@@ -24,4 +30,10 @@ class PostComments(BaseModel):
     created_at = Column(DateTime(timezone=True), default=datetime.now)
     updated_at = Column(DateTime(timezone=True), default=datetime.now, onupdate=datetime.now)
     
-    # @TODO: реализовать связи
+
+class PostCommentLikes(BaseModel):
+    __tablename__ = 'post_comment_likes'
+
+    id = Column(Integer, primary_key=True)
+    comment_id = Column(Integer, ForeignKey('comment.id', ondelete="CASCADE"))
+    user_id = Column(Integer, ForeignKey('users.id'))

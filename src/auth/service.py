@@ -1,3 +1,4 @@
+# Не понял предназначение файла
 import src.auth.schemas as AuthSchema
 from src.user.repository import UserRepository
 
