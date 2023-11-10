@@ -1,6 +1,7 @@
 # import src.user.models as UserModel  # такого класса не существует
+from datetime import datetime, timedelta
+
 from src.models import SessionLocal, pwd_context
-import hashlib
 from sqlalchemy.exc import NoResultFound
 from src.user.models import User
 from src.exceptions import NotFound, AlreadyExists
@@ -30,5 +31,10 @@ class UserRepository:
 
     def verify_password(self, plain_password, hashed_password):
         return pwd_context.verify(plain_password, hashed_password)
+
+    def set_online(self, user:User):
+        user.last_seen = datetime.now() + timedelta(minutes=3)
+        self.db.add(user)
+        self.db.commit()
 
 user_repository = UserRepository()

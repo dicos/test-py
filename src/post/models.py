@@ -1,4 +1,5 @@
 from sqlalchemy import *
+from src.common.log import loging_models
 from ..models import BaseModel
 from datetime import datetime
 
@@ -10,7 +11,7 @@ class Posts(BaseModel):
     code = Column(String, unique=True)
     created_at = Column(DateTime(timezone=True), default=datetime.now)
     updated_at = Column(DateTime(timezone=True), default=datetime.now, onupdate=datetime.now)
-    
+
 
 class PostLikes(BaseModel):
     __tablename__ = 'post_likes'
@@ -37,3 +38,6 @@ class PostCommentLikes(BaseModel):
     id = Column(Integer, primary_key=True)
     comment_id = Column(Integer, ForeignKey('comment.id', ondelete="CASCADE"))
     user_id = Column(Integer, ForeignKey('users.id'))
+
+
+loging_models(Posts, PostLikes, PostComments, PostCommentLikes)

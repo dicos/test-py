@@ -29,3 +29,9 @@ UtilsFastapiConnectDB = FastAPISessionMaker(os.getenv('DB_CONNECT'))
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
+
+
+LOG_FILENAME = os.path.join(
+    os.path.abspath(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
+    'app.log'
+)

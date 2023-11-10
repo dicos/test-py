@@ -1,10 +1,9 @@
 from datetime import timedelta, datetime
 from typing import Annotated
 
-from fastapi import Depends, HTTPException
+from fastapi import Depends
 from jose import jwt, JWTError
 from pydantic import BaseModel
-from starlette import status
 
 from src.user.repository import user_repository
 from src.auth.constants import SECRET_KEY, ALGORITHM
@@ -13,7 +12,7 @@ from src.models import oauth2_scheme, pwd_context
 from src.user.models import User
 
 
-async def get_user_by_token(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+def get_user_by_token_without_depends(token: str) -> User:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
@@ -26,6 +25,10 @@ async def get_user_by_token(token: Annotated[str, Depends(oauth2_scheme)]) -> Us
     if user is None:
         raise credentials_exception
     return user
+
+
+async def get_user_by_token(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
+    return get_user_by_token_without_depends(token)
 
 
 class TokenData(BaseModel):

@@ -1,5 +1,6 @@
+from datetime import datetime, timedelta
+
 from src.models import SessionLocal
-from sqlalchemy.exc import NoResultFound
 
 from src.exceptions import NotFound
 from src.story.models import Stories, StoryViews
@@ -17,11 +18,17 @@ class StoryRepository:
 
     def view_story(self, *, user: User, story_id: int) -> int:
         if not self.db.query(Stories).filter(Stories.id==story_id).scalar():
+            self.db.rollback()
             raise NotFound
         view = StoryViews(story_id=story_id, user_id=user.id)
         self.db.add(view)
         self.db.commit()
         return view.id
+
+    def delete_old_stories(self):
+        yesterday = datetime.now() - timedelta(days=1)
+        self.db.query(Stories).filter(Stories.created_at<yesterday).delete()
+        self.db.commit()
 
 
 story_repository = StoryRepository()

@@ -1,7 +1,7 @@
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 from sqlalchemy import desc
 from sqlalchemy import func
-from src.exceptions import NotFound
+from src.exceptions import NotFound, AlreadyExists
 
 from src.models import SessionLocal
 from src.post.models import Posts, PostLikes, PostComments
@@ -15,13 +15,18 @@ class PostRepository:
     def create_post(self, *, user: User, code: str) -> int:
         post = Posts(user_id=user.id, code=code)
         self.db.add(post)
-        self.db.commit()
+        try:
+            self.db.commit()
+        except IntegrityError:
+            self.db.rollback()
+            raise AlreadyExists('Already exists')
         return post.id
 
     def add_like(self, *, user: User, code: str) -> int:
         try:
             post = self.db.query(Posts).filter(Posts.code==code).one()
         except NoResultFound:
+            self.db.rollback()
             raise NotFound
 
         like = PostLikes(post_id=post.id, user_id=user.id)

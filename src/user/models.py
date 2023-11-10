@@ -3,6 +3,9 @@ from ..models import BaseModel
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
 
+from src.common.log import loging_models
+
+
 class User(BaseModel):
     __tablename__ = 'users'
     
@@ -22,3 +25,6 @@ class User(BaseModel):
             return False
             
         return self.last_seen >= datetime.now()
+
+
+loging_models(User)

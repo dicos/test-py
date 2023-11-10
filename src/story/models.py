@@ -1,7 +1,7 @@
 from sqlalchemy import *
 from ..models import BaseModel
-from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime
+from src.common.log import loging_models
 
 class Stories(BaseModel):
     __tablename__ = 'stories'
@@ -20,3 +20,6 @@ class StoryViews(BaseModel):
     user_id = Column(Integer, ForeignKey('users.id'))
     story_id = Column(Integer, ForeignKey('stories.id'))
     created_at = Column(DateTime(timezone=True), default=datetime.now)
+
+
+loging_models(Stories, StoryViews,)

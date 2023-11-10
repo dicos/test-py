@@ -4,7 +4,7 @@ from typing import Annotated
 
 import src.post.schemas as PostSchema
 from src.auth.utils import get_user_by_token
-from src.exceptions import NotFound
+from src.exceptions import NotFound, AlreadyExists
 from src.post.repository import post_repository
 from src.user.models import User
 from src.utils import jsonResp
@@ -20,7 +20,10 @@ async def create(request: PostSchema.CreatePostRequest, current_user: Annotated[
     '''
     ## Добавление поста.
     '''
-    post_id = post_repository.create_post(user=current_user, code=request.code)
+    try:
+        post_id = post_repository.create_post(user=current_user, code=request.code)
+    except AlreadyExists as e:
+        return jsonResp.error(str(e), 403)
     return PostSchema.CreateResponse(id=post_id)
 
 @router.post(
